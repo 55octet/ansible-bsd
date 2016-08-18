@@ -1,0 +1,11 @@
+---
+- name: Install ezjail
+  pkgng: name=ezjail state=present
+- name: Enable ezjail in rc.conf
+  lineinfile: dest=/etc/rc.conf regexp="ezjail_enable" line="ezjail_enable=\"YES\""
+- name: Check for nginx jail
+  stat: path=/usr/jails/nginx
+  register: localhost_nginx_status
+- name: Create nginx jail
+  shell: ezjail-admin install -P
+  when: localhost_nginx_status.stat.exists == False
