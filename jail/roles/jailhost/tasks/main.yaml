@@ -1,12 +1,8 @@
 ---
 - name: Install ezjail
   pkgng: name=ezjail state=present
-- name: Check to see if portsnap was initialized
-  find: paths="/usr/ports" pattern="INDEX-*"
-  register: localhost_ports_dir
 - name: Fetch portsnap repo
-  command: portsnap fetch extract --interactive
-  when: localhost_ports_dir.matched == 0
+  command: portsnap fetch extract --interactive creates="/usr/ports/INDEX-*"
 - name: Check to see if ports tree needs updated
   find: paths="/usr/ports" pattern="INDEX-*" age=1d
   register: localhost_ports_age
@@ -15,18 +11,10 @@
   when: localhost_ports_age.matched > 0
 - name: Enable ezjail in rc.conf
   lineinfile: dest=/etc/rc.conf regexp="ezjail_enable" line="ezjail_enable=\"YES\""
-- name: Check for nginx jail
-  stat: path=/usr/jails/nginx
-  register: localhost_nginx_jail_dir
 - name: Create basejail
-  shell: ezjail-admin install -P 
-  when: localhost_nginx_jail_dir.stat.exists == False
+  shell: ezjail-admin install -P creates=/usr/jails/basejail
 - name: Create nginx jail
-  shell: ezjail-admin create nginx 192.168.166.92
-  when: localhost_nginx_jail_dir.stat.exists == False
-- name: Check for Python in nginx jail
-  stat: path=/usr/jails/nginx/usr/local/bin/python
-  register: nginx_python
+  shell: ezjail-admin create nginx 192.168.166.92 creates=/usr/jails/nginx
 - name: Update default router in nginx jail
   lineinfile: dest=/usr/jails/nginx/etc/rc.conf state=present create=yes regexp="default_router" line="default_router=192.168.166.1"
   notify: restart nginx jail
@@ -35,5 +23,4 @@
   notify: restart nginx jail
 - meta: flush_handlers
 - name: Install python in nginx jail
-  shell: pkg -j nginx install -y python
-  when: nginx_python.stat.exists == False
+  shell: pkg -j nginx install -y python creates=/usr/jails/nginx/usr/local/bin/python
