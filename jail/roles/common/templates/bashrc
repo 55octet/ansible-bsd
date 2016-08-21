@@ -13,4 +13,4 @@ export HISTTIMEFORMAT='%F %T '
 alias ll="ls -l"
 alias lt="ls -ltr"
 alias la="ls -la"
-
+alias vi="vim"

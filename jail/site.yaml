@@ -3,6 +3,9 @@
   remote_user: root
   roles:
      - common
+- hosts: localhost
+  roles:
+     - jailhost
 - hosts: webproxyjail
   remote_user: root
   roles:
