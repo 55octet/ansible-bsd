@@ -7,5 +7,11 @@
   template: src="bashrc" dest="{{ ansible_env.HOME }}/.bashrc"
 - name: Copy bash_profile
   template: src="bash_profile" dest="{{ ansible_env.HOME }}/.bash_profile"
+- name: Copy vimrc
+  template: src="vimrc" dest="{{ ansible_env.HOME }}/.vimrc"
+- name: Create .vim directory
+  file: path="{{ ansible_env.HOME }}/.vim" state=directory mode=0700
+- name: Copy vim syntax
+  copy: src="vim/" dest="{{ ansible_env.HOME }}/.vim"
 - name: Change root's shell
   user: name=root shell=/usr/local/bin/bash

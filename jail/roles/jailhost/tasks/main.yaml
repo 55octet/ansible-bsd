@@ -2,13 +2,17 @@
 - name: Install ezjail
   pkgng: name=ezjail state=present
 - name: Check to see if portsnap was initialized
-  find: paths="/usr/ports/" pattern="INDEX-*"
+  find: paths="/usr/ports" pattern="INDEX-*"
   register: localhost_ports_dir
 - name: Fetch portsnap repo
   command: portsnap fetch extract --interactive
   when: localhost_ports_dir.matched == 0
+- name: Check to see if ports tree needs updated
+  find: paths="/usr/ports" pattern="INDEX-*" age=1d
+  register: localhost_ports_age
 - name: Update portsnap
   command: portsnap update --interactive
+  when: localhost_ports_age.matched > 0
 - name: Enable ezjail in rc.conf
   lineinfile: dest=/etc/rc.conf regexp="ezjail_enable" line="ezjail_enable=\"YES\""
 - name: Check for nginx jail
