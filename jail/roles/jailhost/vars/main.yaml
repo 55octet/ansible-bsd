@@ -1,0 +1,5 @@
+---
+default_router_ip_addr: 192.168.166.1
+jails:
+- { name: nginx, ip_addr: 192.168.166.92 }
+

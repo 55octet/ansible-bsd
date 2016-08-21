@@ -1,4 +1,6 @@
 ---
+- name: Set default Python version
+  lineinfile: dest=/etc/make.conf create=yes regexp="^DEFAULT_VERSIONS" line="DEFAULT_VERSIONS=python=2.7 python2=2.7 python3=3.5"
 - name: Install bash
   pkgng: name=bash state=present
 - name: Install vim

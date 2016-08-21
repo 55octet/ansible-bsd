@@ -13,11 +13,13 @@
   lineinfile: dest=/etc/rc.conf regexp="ezjail_enable" line="ezjail_enable=\"YES\""
 - name: Create basejail
   shell: ezjail-admin install -P creates=/usr/jails/basejail
-- name: Create nginx jail
-  shell: ezjail-admin create nginx 192.168.166.92 creates=/usr/jails/nginx
-- name: Update default router in nginx jail
-  lineinfile: dest=/usr/jails/nginx/etc/rc.conf state=present create=yes regexp="default_router" line="default_router=192.168.166.1"
-  notify: restart nginx jail
+- name: Create jails
+  shell: ezjail-admin create {{ item.name }} {{ item.ip_addr }} creates=/usr/jails/{{ item.name }}
+  with_items: "{{ jails }}"
+- name: Update default router in jails
+  lineinfile: dest=/usr/jails/{{ item.name }}/etc/rc.conf state=present create=yes regexp="default_router" line="default_router={{ default_router_ip_addr }}"
+  notify: restart "{{ item.name }}" jail
+  with_items: "{{ jails }}"
 - name: Install resolv.conf into the nginx jail
   copy: src=/etc/resolv.conf dest=/usr/jails/nginx/etc/resolv.conf
   notify: restart nginx jail
