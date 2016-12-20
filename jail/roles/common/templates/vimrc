@@ -5,7 +5,7 @@ if has('gui_running')
 else
     set background=dark
 endif
-colorscheme grb256
+colorscheme desert
 set tabstop=4
 set shiftwidth=4
 set expandtab
