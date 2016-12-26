@@ -16,4 +16,5 @@ set showmode
 set nocp
 set foldmethod=indent
 set foldlevel=99
+set nobackup
 filetype plugin indent on
