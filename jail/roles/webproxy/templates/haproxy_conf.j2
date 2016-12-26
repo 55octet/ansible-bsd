@@ -3,6 +3,7 @@ global
     chroot /var/haproxy
     user haproxy
     group haproxy
+    maxconn 2048
     daemon
 
 defaults
@@ -34,7 +35,7 @@ frontend tls_router
 
 backend openvpn
     mode tcp
-    timeout server 2h
+    timeout server 4h
     server openvpn-server 192.168.166.1:443
 
 backend apache
