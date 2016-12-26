@@ -1,0 +1,44 @@
+global
+    log /var/run/log local0
+    chroot /var/haproxy
+    user haproxy
+    group haproxy
+    daemon
+
+defaults
+    log     global
+    option  tcplog
+
+    option http-server-close
+    timeout http-request        5s
+    timeout connect             5000
+    timeout client              30000
+    timeout server              30000
+
+frontend tls_router
+    bind *:8443
+    mode tcp
+    option tcpka
+    acl local src 127.0.0.0/8 192.168.166.0/24
+
+#    tcp-request connection reject if { src_conn_cur ge 10 }
+
+    tcp-request inspect-delay 2s
+    tcp-request content accept if   HTTP
+
+    default_backend apache
+
+    use_backend openvpn         if  { payload(0,2) -m reg ^\x00[\x0D-\xFF]$ }
+
+    use_backend openvpn         if  { payload(0,3) -m reg ^\x00[\x0D-\xFF]\x38 }
+
+backend openvpn
+    mode tcp
+    timeout server 2h
+    server openvpn-server 192.168.166.1:443
+
+backend apache
+    # Sends client to https
+    redirect scheme https if !{ ssl_fc }
+    server apache 192.168.166.202:443
+    

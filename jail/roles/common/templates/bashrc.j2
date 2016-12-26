@@ -2,6 +2,7 @@ export EDITOR=vim
 export PAGER="less -R"
 
 shopt -s histappend
+shopt -s checkwinsize
 
 export HISTCONTROL=ignoreboth
 export HISTIGNORE='ls:bg:fg:history'
@@ -14,3 +15,8 @@ alias ll="ls -l"
 alias lt="ls -ltr"
 alias la="ls -la"
 alias vi="vim"
+
+{% if virtualenvwrapper_path is defined %}
+export WORKON_HOME={{ virtualenvwrapper_path }}
+source /usr/local/bin/virtualenvwrapper.sh
+{% endif %}

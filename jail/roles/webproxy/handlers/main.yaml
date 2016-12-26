@@ -1,0 +1,6 @@
+---
+- name: adjkerntz
+  shell: adjkerntz -a
+- name: restart haproxy
+  service: name=haproxy
+           state=restarted

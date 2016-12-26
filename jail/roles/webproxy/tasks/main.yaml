@@ -1,3 +1,27 @@
 ---
+- name: Set timezone
+  shell: tzsetup America/New_York
+  args:
+    creates: /etc/localtime
+  notify:
+      - adjkerntz
 - name: Install nginx
   pkgng: name=nginx state=present
+- name: Install HAProxy
+  pkgng: name=haproxy state=present
+- name: Install rc.conf
+  template: src=rc_conf.j2
+            dest=/etc/rc.conf
+- name: Install haproxy.conf
+  template: src=haproxy_conf.j2
+            dest=/usr/local/etc/haproxy.conf
+  notify: restart haproxy
+- name: Update syslog.conf for HAProxy
+  lineinfile: dest=/etc/syslog.conf
+              create=yes
+              line='local0.* /var/log/haproxy.log'
+- name: Add haproxy user
+  user: name=haproxy
+        shell=/usr/sbin/nologin
+        home=/var/haproxy
+        skeleton=/var/empty

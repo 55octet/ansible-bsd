@@ -1,28 +1,31 @@
 ---
-- name: Install ezjail
-  pkgng: name=ezjail state=present
-- name: Fetch portsnap repo
-  command: portsnap fetch extract --interactive creates="/usr/ports/INDEX-*"
-- name: Check to see if ports tree needs updated
-  find: paths="/usr/ports" pattern="INDEX-*" age=1d
-  register: localhost_ports_age
-- name: Update portsnap
-  command: portsnap update --interactive
-  when: localhost_ports_age.matched > 0
-- name: Enable ezjail in rc.conf
-  lineinfile: dest=/etc/rc.conf regexp="ezjail_enable" line="ezjail_enable=\"YES\""
-- name: Create basejail
-  shell: ezjail-admin install -P creates=/usr/jails/basejail
-- name: Create jails
-  shell: ezjail-admin create {{ item.name }} {{ item.ip_addr }} creates=/usr/jails/{{ item.name }}
-  with_items: "{{ jails }}"
-- name: Update default router in jails
-  lineinfile: dest=/usr/jails/{{ item.name }}/etc/rc.conf state=present create=yes regexp="default_router" line="default_router={{ default_router_ip_addr }}"
-  notify: restart "{{ item.name }}" jail
-  with_items: "{{ jails }}"
-- name: Install resolv.conf into the nginx jail
-  copy: src=/etc/resolv.conf dest=/usr/jails/nginx/etc/resolv.conf
-  notify: restart nginx jail
-- meta: flush_handlers
-- name: Install python in nginx jail
-  shell: pkg -j nginx install -y python creates=/usr/jails/nginx/usr/local/bin/python
+- name: Install virtualenvwrapper
+  pkgng: name=py27-virtualenvwrapper
+         state=present
+#- name: Install ezjail
+#  pkgng: name=ezjail state=present
+#- name: Fetch portsnap repo
+#  command: portsnap fetch extract --interactive creates="/usr/ports/INDEX-*"
+#- name: Check to see if ports tree needs updated
+#  find: paths="/usr/ports" pattern="INDEX-*" age=1d
+#  register: localhost_ports_age
+#- name: Update portsnap
+#  command: portsnap update --interactive
+#  when: localhost_ports_age.matched > 0
+#- name: Enable ezjail in rc.conf
+#  lineinfile: dest=/etc/rc.conf regexp="ezjail_enable" line="ezjail_enable=\"YES\""
+#- name: Create basejail
+#  shell: ezjail-admin install -P creates=/usr/jails/basejail
+#- name: Create jails
+#  shell: ezjail-admin create {{ item.name }} {{ item.ip_addr }} creates=/usr/jails/{{ item.name }}
+#  with_items: "{{ jails }}"
+#- name: Update default router in jails
+#  lineinfile: dest=/usr/jails/{{ item.name }}/etc/rc.conf state=present create=yes regexp="default_router" line="default_router={{ default_router_ip_addr }}"
+#  notify: restart "{{ item.name }}" jail
+#  with_items: "{{ jails }}"
+#- name: Install resolv.conf into the nginx jail
+#  copy: src=/etc/resolv.conf dest=/usr/jails/nginx/etc/resolv.conf
+#  notify: restart nginx jail
+#- meta: flush_handlers
+#- name: Install python in nginx jail
+#  shell: pkg -j nginx install -y python creates=/usr/jails/nginx/usr/local/bin/python

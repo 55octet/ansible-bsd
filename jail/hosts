@@ -1,4 +1,4 @@
-localhost ansible_connection=local ansible_python_interpreter=/usr/local/bin/python
+localhost ansible_connection=local ansible_python_interpreter=/usr/local/bin/python virtualenvwrapper_path=~/.virtualenvs
 
 [jails:children]
 webproxyjail
