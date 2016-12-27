@@ -1,13 +1,19 @@
 ---
 - name: Set default Python version
-  lineinfile: dest=/etc/make.conf create=yes regexp="^DEFAULT_VERSIONS" line="DEFAULT_VERSIONS=python=2.7 python2=2.7 python3=3.5"
+  lineinfile: dest=/etc/make.conf
+              create=yes
+              regexp="^DEFAULT_VERSIONS"
+              line="DEFAULT_VERSIONS=python=2.7 python2=2.7 python3=3.5"
 - name: Install bash
   pkgng: name=bash state=present
 - name: Install vim
   pkgng: name=vim-lite state=present
 - name: Copy bashrc
   template: src=bashrc.j2
-            dest="{{ ansible_env.HOME }}/.bashrc"
+            dest={{ ansible_env.HOME }}/.bashrc
+- name: Copy gitconfig
+  template: src=gitconfig.j2
+            dest={{ ansible_env.HOME }}/.gitconfig
 - name: Copy bash_profile
   template: src="bash_profile" dest="{{ ansible_env.HOME }}/.bash_profile"
 - name: Copy vimrc
